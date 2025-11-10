@@ -49,7 +49,7 @@ impl Ty {
             Float => Some(4),
             Double => Some(5),
             Numeric => Some(6),
-            _ => None
+            _ => None,
         }
     }
 }

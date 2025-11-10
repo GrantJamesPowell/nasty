@@ -1,2 +1,1 @@
-use crate::{ast::expr::FunctionIdentifier, ty::Ty};
-
+pub enum TypeCheckError {}

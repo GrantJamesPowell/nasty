@@ -15,7 +15,14 @@ pub enum FunctionIdentifier {
     Lower,
 }
 
-pub enum Expr {
+#[derive(Debug, Clone)]
+pub struct Expr<Meta> {
+    pub ast: Arc<ExprAst<Meta>>,
+    pub meta: Arc<Meta>,
+}
+
+#[derive(Debug, Clone)]
+pub enum ExprAst<Meta> {
     Attribute {
         name: String,
         ty: ETy,
@@ -25,11 +32,11 @@ pub enum Expr {
         ty: ETy,
     },
     FunctionCall {
-        args: Arc<[Expr]>,
         func: FunctionIdentifier,
+        args: Box<[Arc<Expr<Meta>>]>,
     },
     Cast {
-        source: Arc<Expr>,
+        source: Arc<Expr<Meta>>,
         target: Ty,
     },
 }

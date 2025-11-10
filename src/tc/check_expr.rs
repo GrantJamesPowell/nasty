@@ -10,15 +10,19 @@ use crate::{
     ty::ETy,
 };
 
+pub type AttrReqs = HashMap<String, ETy>;
+
 #[derive(Debug, Clone)]
 pub struct ExprTyCheck {
-    ty: ETy,
-    windowed: bool,
-    aggregate: bool,
-    attr_reqs: HashMap<String, ETy>,
+    pub ty: ETy,
+    pub windowed: bool,
+    pub aggregate: bool,
+    pub attr_reqs: AttrReqs,
 }
 
-pub fn check_expr(node: &Expr) -> Result<ExprTyCheck, TypeCheckError> {
+pub type ExprCheckRes = Result<ExprTyCheck, TypeCheckError>;
+
+pub fn check_expr(node: &Expr) -> ExprCheckRes {
     match node {
         Expr::Scalar { val, ty } => {
             check_scalar(val, ty)?;
@@ -56,7 +60,7 @@ pub fn check_expr(node: &Expr) -> Result<ExprTyCheck, TypeCheckError> {
                 .map(|arg| check_expr(arg))
                 .collect::<Result<Vec<ExprTyCheck>, TypeCheckError>>()?;
 
-            check_function_call(*func, arg_tys.iter())
+            check_function_call(*func, arg_tys.iter().as_slice())
         }
     }
 }

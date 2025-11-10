@@ -25,8 +25,8 @@ pub fn check_scalar(val: &ScalarValue, ety: &ETy) -> Result<(), TypeCheckError> 
         ScalarValue::Float32(_) => todo!(),
         ScalarValue::Float64(_) => todo!(),
         ScalarValue::Text(_) => todo!(),
-        ScalarValue::Bytea(items) => todo!(),
-        ScalarValue::Array(scalar_values) => todo!(),
+        ScalarValue::Bytea(_bytes) => todo!(),
+        ScalarValue::Array(_scalar_values) => todo!(),
         ScalarValue::Map(hash_map) => todo!(),
     }
 }

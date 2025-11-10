@@ -7,7 +7,21 @@ pub struct ETy {
     pub nullable: bool,
 }
 
-impl ETy {}
+impl ETy {
+    pub fn make_nullable(&self) -> ETy {
+        ETy {
+            nullable: false,
+            ..(self.clone())
+        }
+    }
+
+    pub fn make_non_nullable(&self) -> ETy {
+        ETy {
+            nullable: true,
+            ..(self.clone())
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub enum Ty {
@@ -24,11 +38,25 @@ pub enum Ty {
     Bytea,
     Jsonb,
     Variants(Arc<[String]>),
-    Struct(HashMap<String, ETy>),
+    Struct(Arc<HashMap<String, ETy>>),
     Record(Arc<ETy>),
 }
 
 impl Ty {
+    pub fn make_nullable(&self) -> ETy {
+        ETy {
+            ty: self.clone(),
+            nullable: false,
+        }
+    }
+
+    pub fn make_non_nullable(&self) -> ETy {
+        ETy {
+            ty: self.clone(),
+            nullable: true,
+        }
+    }
+
     pub fn is_numeric(&self) -> bool {
         use Ty::*;
 

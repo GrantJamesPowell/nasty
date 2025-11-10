@@ -11,7 +11,7 @@ pub enum ScalarValue {
     Text(Arc<str>),
     Bytea(Arc<[u8]>),
     Array(Arc<[ScalarValue]>),
-    Map(HashMap<String, ScalarValue>),
+    Map(Arc<HashMap<String, ScalarValue>>),
 }
 
 impl From<bool> for ScalarValue {
@@ -56,6 +56,10 @@ where
     V: Into<ScalarValue>,
 {
     fn from(map: HashMap<K, V>) -> Self {
-        ScalarValue::Map(map.into_iter().map(|(k, v)| (k.into(), v.into())).collect())
+        ScalarValue::Map(Arc::from(
+            map.into_iter()
+                .map(|(k, v)| (k.into(), v.into()))
+                .collect::<HashMap<String, ScalarValue>>(),
+        ))
     }
 }

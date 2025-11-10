@@ -51,14 +51,14 @@ fn numeric_promote<'a>(tys: impl IntoIterator<Item = &'a Ty>) -> Result<Ty, Type
     todo!();
 }
 
-fn with_arity(
-    n: usize,
-    args: &[ExprTyCheck],
-    func: impl Fn(&[ExprTyCheck]) -> ExprCheckRes,
-) -> ExprCheckRes {
-    if args.len() == n {
-        func(args)
-    } else {
-        todo!("Invalid arity")
-    }
-}
+// fn with_arity(
+//     n: usize,
+//     args: &[ExprTyCheck],
+//     func: impl Fn(&[ExprTyCheck]) -> ExprCheckRes,
+// ) -> ExprCheckRes {
+//     if args.len() == n {
+//         func(args)
+//     } else {
+//         todo!("Invalid arity")
+//     }
+// }

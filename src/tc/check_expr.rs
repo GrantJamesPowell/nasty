@@ -41,7 +41,7 @@ impl ExprTypeCheckResult {
     }
 }
 
-type CheckedExpr<Meta> = Expr<(ExprTypeCheckResult, Arc<Meta>)>;
+pub type CheckedExpr<Meta> = Expr<(ExprTypeCheckResult, Arc<Meta>)>;
 
 pub struct TypeCheckedExpr<Meta>(CheckedExpr<Meta>);
 

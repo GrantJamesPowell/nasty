@@ -1,7 +1,10 @@
+use smartstring::alias::String;
+
 use super::scalar_value::ScalarValue;
-use crate::ty::{ExtendedTy, Ty};
+use crate::ty::{ETy, Ty};
 use std::sync::Arc;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FunctionIdentifier {
     Add,
     Sub,
@@ -12,16 +15,14 @@ pub enum FunctionIdentifier {
     Lower,
 }
 
-pub enum Rel {
-    GenerateSeries { start: Expr, stop: Expr },
-    Where { condition: Expr },
-}
-
 pub enum Expr {
-    Attribute {},
+    Attribute {
+        name: String,
+        ty: ETy,
+    },
     Scalar {
         val: ScalarValue,
-        ty: ExtendedTy,
+        ty: ETy,
     },
     FunctionCall {
         args: Arc<[Expr]>,

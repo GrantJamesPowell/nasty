@@ -1,6 +1,8 @@
 use std::{collections::HashMap, sync::Arc};
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum ScalarValue {
+    Null,
     Bool(bool),
     Int32(i32),
     Int64(i64),

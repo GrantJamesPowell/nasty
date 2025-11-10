@@ -1,13 +1,15 @@
 use smartstring::alias::String;
 use std::{collections::HashMap, sync::Arc};
 
-#[derive(PartialEq, Eq, Debug, Clone)]
-pub struct ExtendedTy {
+#[derive(Debug, Clone)]
+pub struct ETy {
     pub ty: Ty,
-    pub nullabe: bool,
+    pub nullable: bool,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone)]
+impl ETy {}
+
+#[derive(Debug, Clone)]
 pub enum Ty {
     Int,
     Real,
@@ -18,6 +20,7 @@ pub enum Ty {
     TimestampTz,
     Bytea,
     Jsonb,
-    Struct(HashMap<String, ExtendedTy>),
-    Record(Arc<ExtendedTy>),
+    Variants(Arc<[String]>),
+    Struct(HashMap<String, ETy>),
+    Record(Arc<ETy>),
 }

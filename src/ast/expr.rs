@@ -1,5 +1,3 @@
-use smartstring::alias::String;
-
 use super::scalar_value::ScalarValue;
 use crate::ty::{ETy, Ty};
 use std::sync::Arc;
@@ -24,10 +22,6 @@ pub struct Expr<Meta> {
 
 #[derive(Debug, Clone)]
 pub enum ExprAst<Meta> {
-    Attribute {
-        name: String,
-        ty: ETy,
-    },
     Scalar {
         val: ScalarValue,
         ty: ETy,

@@ -1,4 +1,4 @@
-use crate::{tc::check_expr::CheckedExpr, ty::ETy};
+use crate::{ast::expr::ExprAst, ast::expr::FunctionIdentifier, tc::check_expr::CheckedExpr};
 
 pub struct Expression<Meta = ()> {
     ast: CheckedExpr<Meta>,
@@ -6,10 +6,11 @@ pub struct Expression<Meta = ()> {
 
 impl Expression {
     fn add(&self, rhs: impl Into<Expression>) -> Expression {
-        todo!()
-    }
+        let ast = ExprAst::FunctionCall {
+            func: FunctionIdentifier::Add,
+            args: Box::from([]),
+        };
 
-    fn sub(&self, lhs: impl Into<Expression>) -> Expression {
         todo!()
     }
 }

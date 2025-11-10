@@ -2,14 +2,13 @@ use std::sync::Arc;
 
 use crate::{
     ast::expr::{Expr, ExprAst},
-    tc::{attr_reqs::AttrReqs, tc_error::TypeCheckError},
+    tc::{check_scalar::check_scalar, tc_error::TypeCheckError},
     ty::ETy,
 };
 
 #[derive(Debug, Clone)]
 pub struct ExprTyCheck {
     pub ty: ETy,
-    pub attr_reqs: AttrReqs,
 }
 
 #[derive(Debug, Clone)]
@@ -53,21 +52,26 @@ pub fn check_expr<Meta>(input: &Expr<Meta>) -> TypeCheckedExpr<Meta> {
         ExprAst<(ExprTypeCheckResult, Arc<Meta>)>,
         ExprTypeCheckResult,
     ) = match ast.as_ref() {
-        Attribute { name, ty } => {
-            let res = ExprTypeCheckResult::Success(ExprTyCheck {
-                ty: ty.clone(),
-                attr_reqs: AttrReqs::new(),
-            });
+        Scalar { val, ty } => {
+            let output_ty = || ExprTyCheck { ty: ty.clone() };
 
-            let new_ast = Attribute {
-                name: name.clone(),
+            let res = check_scalar(val, ty)
+                .map(|_| ExprTypeCheckResult::Success(output_ty()))
+                .unwrap_or_else(|err| ExprTypeCheckResult::SourceError {
+                    err,
+                    output_ty: Some(output_ty()),
+                });
+
+            let new_ast = Scalar {
+                val: val.clone(),
                 ty: ty.clone(),
             };
 
             (new_ast, res)
         }
         Cast { source, target } => {
-            let source_res = check_expr(source).0;
+            todo!();
+            // let source_res = check_expr(source).0;
 
             // let res: ExprTypeCheckResult = {
             //     match source_res.meta.0.as_ref() {
@@ -86,31 +90,11 @@ pub fn check_expr<Meta>(input: &Expr<Meta>) -> TypeCheckedExpr<Meta> {
             //     }
             // };
 
-            todo!();
 
             // let output: CheckedExpr<Meta> = Expr {
             //     ast: Arc::from(Cast {
             //         source: Arc::from(source_res),
             //         target: target.clone(),
-            //     }),
-            //     meta: Arc::from((res, Arc::clone(meta))),
-            // };
-
-            // output
-        }
-        Scalar { val, ty } => {
-            todo!();
-            // let res = check_scalar(val, ty).map(|_| ExprTyCheck {
-            //     ty: ty.clone(),
-            //     windowed: false,
-            //     aggregate: false,
-            //     attr_reqs: AttrReqs::new(),
-            // });
-
-            // let output: CheckedExpr<Meta> = Expr {
-            //     ast: Arc::from(Scalar {
-            //         val: val.clone(),
-            //         ty: ty.clone(),
             //     }),
             //     meta: Arc::from((res, Arc::clone(meta))),
             // };
@@ -154,10 +138,9 @@ pub fn check_expr<Meta>(input: &Expr<Meta>) -> TypeCheckedExpr<Meta> {
             // output
         }
     };
-    let output: CheckedExpr<Meta> = Expr {
+
+    TypeCheckedExpr(Expr {
         ast: Arc::from(new_ast),
         meta: Arc::from((check, Arc::clone(meta))),
-    };
-
-    TypeCheckedExpr(output)
+    })
 }

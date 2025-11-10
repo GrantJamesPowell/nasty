@@ -4,7 +4,7 @@ use std::{collections::HashMap, sync::Arc};
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct ExtendedTy {
     pub ty: Ty,
-    pub nullabe: bool
+    pub nullabe: bool,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]
@@ -19,5 +19,5 @@ pub enum Ty {
     Bytea,
     Jsonb,
     Struct(HashMap<String, ExtendedTy>),
-    Record(Arc<ExtendedTy>)
+    Record(Arc<ExtendedTy>),
 }

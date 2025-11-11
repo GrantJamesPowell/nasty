@@ -10,7 +10,7 @@ use crate::{
 pub fn check_function_call<'a>(
     _func: FunctionIdentifier,
     _args: impl IntoIterator<Item = &'a ExprTyCheck>,
-) -> Result<ExprTyCheck, TypeCheckError> {
+) -> ExprTypeCheckResult {
     todo!()
     // match func {
     //     // Binary Math

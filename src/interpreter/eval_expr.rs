@@ -12,7 +12,6 @@ pub fn eval_expr<Meta>(expr: &Expr<Meta>, _ctx: EvalCtx) -> Result<ScalarValue, 
     match ast.as_ref() {
         ExprAst::Scalar { .. } => todo!(),
         ExprAst::FunctionCall { .. } => todo!(),
-        ExprAst::Cast { .. } => todo!(),
     }
     // let check = &meta.0;
 

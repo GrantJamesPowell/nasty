@@ -1,6 +1,5 @@
 use super::scalar_value::ScalarValue;
-use crate::ty::{ETy, Ty};
-use std::sync::Arc;
+use crate::ty::ETy;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FunctionIdentifier {
@@ -15,23 +14,13 @@ pub enum FunctionIdentifier {
 }
 
 #[derive(Debug, Clone)]
-pub struct Expr<Meta> {
-    pub ast: Arc<ExprAst<Meta>>,
-    pub meta: Arc<Meta>,
-}
-
-#[derive(Debug, Clone)]
-pub enum ExprAst<Meta> {
+pub enum ExprAst {
     Scalar {
         val: ScalarValue,
         ty: ETy,
     },
     FunctionCall {
         func: FunctionIdentifier,
-        args: Box<[Arc<Expr<Meta>>]>,
-    },
-    Cast {
-        source: Arc<Expr<Meta>>,
-        target: Ty,
+        args: Box<[usize]>,
     },
 }

@@ -1,11 +1,14 @@
 use crate::{
     ast::scalar_value::ScalarValue,
-    tc::tc_error::TypeCheckError,
+    tc::{
+        check_expr::{ExprTyCheck, ExprTypeCheckResult},
+        tc_error::TypeCheckError,
+    },
     ty::{ETy, Ty},
 };
 
-pub fn check_scalar(val: &ScalarValue, ety: &ETy) -> Result<(), TypeCheckError> {
-    match val {
+pub fn check_scalar(val: &ScalarValue, ety: &ETy) -> ExprTypeCheckResult {
+    let res: Result<(), TypeCheckError> = match val {
         ScalarValue::Null => {
             if ety.nullable {
                 Ok(())
@@ -28,5 +31,15 @@ pub fn check_scalar(val: &ScalarValue, ety: &ETy) -> Result<(), TypeCheckError> 
         ScalarValue::Bytea(_bytes) => todo!(),
         ScalarValue::Array(_scalar_values) => todo!(),
         ScalarValue::Map(_hash_map) => todo!(),
+    };
+
+    let output_ty = ExprTyCheck { ty: ety.clone() };
+
+    match res {
+        Ok(_) => ExprTypeCheckResult::Success(output_ty),
+        Err(err) => ExprTypeCheckResult::SourceError {
+            err,
+            output_ty: Some(output_ty),
+        },
     }
 }

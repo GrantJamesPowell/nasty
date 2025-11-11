@@ -19,6 +19,22 @@ enum Token {
     #[token("|>")]
     Pipe,
 
+    // Comparators
+    #[token("==")]
+    Eq,
+    #[token("=")]
+    Assign,
+    #[token("!=")]
+    NotEq,
+    #[token("<=")]
+    LessEq,
+    #[token(">=")]
+    GreaterEq,
+    #[token("<")]
+    Less,
+    #[token(">")]
+    Greater,
+
     // Strings
     #[regex(r#""([^"\\]|\\.)*""#, parse_string)]
     SingleQuotedString(String),

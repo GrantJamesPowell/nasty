@@ -10,7 +10,6 @@ pub enum FunctionIdentifier {
     Length,
     Upper,
     Lower,
-    Coalesce,
 }
 
 #[derive(Debug, Clone)]

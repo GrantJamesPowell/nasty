@@ -42,33 +42,35 @@ impl ExprTypeCheckResult {
 }
 
 pub fn check_expr<Meta>(expr: &[ExprAst]) -> Vec<ExprTypeCheckResult> {
-    let mut tc: Vec<ExprTypeCheckResult> = Vec::with_capacity(expr.len());
+    use ExprAst::*;
+
+    let mut tcs: Vec<ExprTypeCheckResult> = Vec::with_capacity(expr.len());
 
     for (i, node) in expr.iter().enumerate() {
         let res: ExprTypeCheckResult = match node {
-            ExprAst::Scalar { val, ty } => check_scalar(val, ty),
-            ExprAst::FunctionCall { func, args } => {
-                let arg_tys: Result<Vec<&ExprTypeCheckResult>, usize> = args
-                    .iter()
-                    .copied()
-                    .enumerate()
-                    .map(|(arg_num, pos)| tc.get(i - pos).ok_or(arg_num))
-                    .collect();
+            Scalar { val, ty } => check_scalar(val, ty),
+            FunctionCall { func, args } => {
+                let arg_tys = lookup_expr_type_checks(&tcs, args.iter().map(|&pos| i - pos));
 
                 match arg_tys {
-                    Ok(tys) => tys
-                        .into_iter()
-                        .map(|x| x.ty_ref())
-                        .map(|x| x.ok_or(ExprTypeCheckResult::PropogatedError { output_ty: None }))
-                        .collect::<Result<Vec<&ExprTyCheck>, ExprTypeCheckResult>>()
-                        .map_or_else(|x| x, |tys| check_function_call(*func, tys)),
-                    Err(_) => todo!(),
+                    Ok(tys) => check_function_call(*func, tys),
+                    Err(err) => err,
                 }
             }
         };
 
-        tc[i] = res;
+        tcs[i] = res;
     }
 
-    tc
+    tcs
+}
+
+fn lookup_expr_type_checks<'a>(
+    tcs: &[ExprTypeCheckResult],
+    idxs: impl IntoIterator<Item = usize>,
+) -> Result<Vec<&ExprTyCheck>, ExprTypeCheckResult> {
+    idxs.into_iter()
+        .map(|idx| tcs.get(idx).and_then(|check| check.ty_ref()))
+        .map(|x| x.ok_or_else(|| -> ExprTypeCheckResult { todo!("handle invalid indexes") }))
+        .collect()
 }

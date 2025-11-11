@@ -8,25 +8,20 @@ use crate::{
 };
 
 pub fn check_function_call<'a>(
-    _func: FunctionIdentifier,
-    _args: impl IntoIterator<Item = &'a ExprTyCheck>,
+    func: FunctionIdentifier,
+    args: impl IntoIterator<Item = &'a ExprTyCheck>,
 ) -> ExprTypeCheckResult {
-    todo!()
-    // match func {
-    //     // Binary Math
-    //     FunctionIdentifier::Add
-    //     | FunctionIdentifier::Sub
-    //     | FunctionIdentifier::Mul
-    //     | FunctionIdentifier::Div => with_arity(2, args, binary_math),
+    use FunctionIdentifier::*;
+    match func {
+        // Binary Math
+        Add | Sub | Mul | Div => binary_math(args),
 
-    //     // Text
-    //     FunctionIdentifier::Length | FunctionIdentifier::Upper | FunctionIdentifier::Lower => {
-    //         with_arity(1, args, text_modification)
-    //     }
-    // }
+        // Text
+        Length | Upper | Lower => text_modification(args),
+    }
 }
 
-fn binary_math(args: &[ExprTyCheck]) -> ExprTypeCheckResult {
+fn binary_math<'a>(_args: impl IntoIterator<Item = &'a ExprTyCheck>) -> ExprTypeCheckResult {
     todo!()
     // Ok(ExprTyCheck {
     //     ty: ETy {
@@ -39,7 +34,7 @@ fn binary_math(args: &[ExprTyCheck]) -> ExprTypeCheckResult {
     // })
 }
 
-fn text_modification(_args: &[ExprTyCheck]) -> ExprTypeCheckResult {
+fn text_modification<'a>(_args: impl IntoIterator<Item = &'a ExprTyCheck>) -> ExprTypeCheckResult {
     todo!();
 }
 
@@ -50,15 +45,3 @@ fn numeric_promote<'a>(tys: impl IntoIterator<Item = &'a Ty>) -> Result<Ty, Type
     });
     todo!();
 }
-
-// fn with_arity(
-//     n: usize,
-//     args: &[ExprTyCheck],
-//     func: impl Fn(&[ExprTyCheck]) -> ExprCheckRes,
-// ) -> ExprCheckRes {
-//     if args.len() == n {
-//         func(args)
-//     } else {
-//         todo!("Invalid arity")
-//     }
-// }

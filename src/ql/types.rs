@@ -1,5 +1,5 @@
-use std::sync::Arc;
 use crate::ast::scalar_value::ScalarValue;
+use std::sync::Arc;
 
 #[derive(Debug, Clone, Copy)]
 pub struct TokenMeta {
@@ -23,7 +23,6 @@ pub enum QlAst {
     Call {
         op: WithMeta<Arc<QlAst>>,
         display: FunctionCallDisplay,
-        args: Box<[Arc<WithMeta<QlAst>>]>
+        args: Box<[Arc<WithMeta<QlAst>>]>,
     },
 }
-

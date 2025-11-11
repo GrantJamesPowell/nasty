@@ -42,11 +42,15 @@ impl ExprTypeCheckResult {
 }
 
 pub fn check_expr<Meta>(expr: &[ExprAst]) -> Vec<ExprTypeCheckResult> {
+    let mut tcs: Vec<ExprTypeCheckResult> = Vec::with_capacity(expr.len());
+    check_expr_from_existing_checks(expr, &mut tcs);
+    tcs
+}
+
+pub fn check_expr_from_existing_checks(expr: &[ExprAst], tcs: &mut [ExprTypeCheckResult]) {
     use ExprAst::*;
 
-    let mut tcs: Vec<ExprTypeCheckResult> = Vec::with_capacity(expr.len());
-
-    for (i, node) in expr.iter().enumerate() {
+    for (i, node) in expr.iter().enumerate().skip(expr.len()) {
         let res: ExprTypeCheckResult = match node {
             Scalar { val, ty } => check_scalar(val, ty),
             FunctionCall { func, args } => {
@@ -61,8 +65,6 @@ pub fn check_expr<Meta>(expr: &[ExprAst]) -> Vec<ExprTypeCheckResult> {
 
         tcs[i] = res;
     }
-
-    tcs
 }
 
 fn lookup_expr_type_checks<'a>(

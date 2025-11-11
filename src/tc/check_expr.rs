@@ -40,8 +40,8 @@ pub type CheckedExpr<Meta> = Expr<(ExprTypeCheckResult, Arc<Meta>)>;
 
 pub struct TypeCheckedExpr<Meta>(CheckedExpr<Meta>);
 
-pub fn check_expr<Meta>(input: &Expr<Meta>)  {
-    let Expr { ast, meta } = input; 
+pub fn check_expr<Meta>(input: &Expr<Meta>) {
+    let Expr { ast, meta } = input;
     todo!()
 }
 

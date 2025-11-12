@@ -1,8 +1,8 @@
-use crate::{ast::expr::ExprAst, ast::expr::FunctionIdentifier, tc::check_expr::CheckedExpr};
+use crate::{ast::expr::ExprAst, ast::expr::FunctionIdentifier};
 
 #[derive(Debug, Clone)]
-pub struct Expression<Meta = ()> {
-    ast: CheckedExpr<Meta>,
+pub struct Expression {
+    ast: usize,
 }
 
 impl Expression {

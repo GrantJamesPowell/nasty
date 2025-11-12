@@ -1,7 +1,9 @@
 use logos::Logos;
 
+use crate::ql::types::{TokenMeta, WithMeta};
+
 #[derive(Logos, Debug, PartialEq)]
-enum Token {
+pub enum Token {
     #[token("true")]
     True,
     #[token("false")]
@@ -42,7 +44,7 @@ enum Token {
     DoubleQuotedString(String),
 
     // Numbers
-    #[regex(r"[0-9]+(?:\.[0-9]+)?(?:[ui](?:16|32|64)|f(?:32|64))?", parse_number)]
+    #[regex(r"[0-9]+(?:\.[0-9]+)?(?:[ui](?:32|64)|f(?:32|64))?", parse_number)]
     Number(Number),
 
     // Symbol
@@ -68,11 +70,11 @@ enum Token {
     // Whitespace
     #[regex(r"[ \t\n\f]+", |lex| Some(lex.slice().to_string()))]
     Whitespace(String),
+    Unknown,
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Number {
-    I16(i16),
     I32(i32),
     I64(i64),
     F32(f32),
@@ -107,15 +109,12 @@ fn parse_number(lex: &mut logos::Lexer<Token>) -> Option<Number> {
         match suffix {
             "" => {
                 // Auto-fit smallest signed type
-                if val >= i16::MIN as i64 && val <= i16::MAX as i64 {
-                    Some(Number::I16(val as i16))
-                } else if val >= i32::MIN as i64 && val <= i32::MAX as i64 {
+                if val <= i32::MAX as i64 {
                     Some(Number::I32(val as i32))
                 } else {
                     Some(Number::I64(val))
                 }
             }
-            "i16" => Some(Number::I16(val as i16)),
             "i32" => Some(Number::I32(val as i32)),
             "i64" => Some(Number::I64(val)),
             _ => None,
@@ -153,6 +152,34 @@ fn parse_string(lex: &mut logos::Lexer<Token>) -> Option<String> {
     }
 
     Some(result)
+}
+
+struct TokenIter<'a> {
+    lexer: logos::Lexer<'a, Token>,
+}
+
+impl<'a> Iterator for TokenIter<'a> {
+    type Item = WithMeta<Token>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let token = self.lexer.next();
+        let span = self.lexer.span();
+        let meta = TokenMeta {
+            start: span.start,
+            length: span.end - span.start,
+        };
+
+        token
+            .map(|t| t.unwrap_or(Token::Unknown))
+            .map(|t| (t, meta))
+    }
+}
+
+pub fn lex<'a>(input: &'a str) -> impl IntoIterator<Item = WithMeta<Token>> {
+    (TokenIter {
+        lexer: Token::lexer(input),
+    })
+    .into_iter()
 }
 
 #[cfg(test)]

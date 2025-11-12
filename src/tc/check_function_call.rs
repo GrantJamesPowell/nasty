@@ -12,11 +12,9 @@ pub fn check_function_call<'a>(
     args: impl IntoIterator<Item = &'a ExprTyCheck>,
 ) -> ExprTypeCheckResult {
     use FunctionIdentifier::*;
-    match func {
-        // Binary Math
-        Add | Sub | Mul | Div => binary_math(args),
 
-        // Text
+    match func {
+        Add | Sub | Mul | Div => binary_math(args),
         Length | Upper | Lower => text_modification(args),
     }
 }

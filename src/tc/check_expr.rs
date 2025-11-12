@@ -33,10 +33,12 @@ impl ExprTypeCheckResult {
     }
 
     fn ty_ref(&self) -> Option<&ExprTyCheck> {
+        use ExprTypeCheckResult::*;
+
         match self {
-            ExprTypeCheckResult::Success(ty) => Some(ty),
-            ExprTypeCheckResult::SourceError { output_ty, .. } => output_ty.as_ref(),
-            ExprTypeCheckResult::PropogatedError { output_ty, .. } => output_ty.as_ref(),
+            Success(ty) => Some(ty),
+            SourceError { output_ty, .. } => output_ty.as_ref(),
+            PropogatedError { output_ty, .. } => output_ty.as_ref(),
         }
     }
 }

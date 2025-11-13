@@ -9,6 +9,10 @@ pub enum Token {
     #[token("false")]
     False,
 
+    // Unary operators
+    #[token("!")]
+    Bang,
+
     // Binary operators
     #[token("+")]
     Plus,

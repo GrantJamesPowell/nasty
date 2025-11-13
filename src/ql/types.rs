@@ -7,6 +7,17 @@ pub struct TokenMeta {
     pub length: usize,
 }
 
+impl TokenMeta {
+    pub fn combine(self, rhs: TokenMeta) -> TokenMeta {
+        let start = self.start.min(rhs.start);
+        let end = (self.start + self.length).max(rhs.start + rhs.length);
+        TokenMeta {
+            start,
+            length: end - start,
+        }
+    }
+}
+
 pub type WithMeta<T> = (T, TokenMeta);
 
 #[derive(Debug, Clone, Copy)]
@@ -14,6 +25,7 @@ pub enum FunctionCallDisplay {
     Call,
     Prefix,
     Infix,
+    Postfix,
 }
 
 #[derive(Debug, Clone)]
@@ -21,7 +33,7 @@ pub enum QlAst {
     Symbol(Arc<str>),
     Literal(ScalarValue),
     Call {
-        op: WithMeta<Arc<QlAst>>,
+        op: Arc<WithMeta<QlAst>>,
         display: FunctionCallDisplay,
         args: Box<[Arc<WithMeta<QlAst>>]>,
     },

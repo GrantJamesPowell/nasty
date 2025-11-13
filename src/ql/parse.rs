@@ -1,8 +1,11 @@
+use std::sync::Arc;
+
 use crate::{
     ast::scalar_value::ScalarValue,
     ql::{
+        binding_power::postfix_binding_power,
         lex::{Number as LexNum, Token, lex},
-        types::{QlAst, TokenMeta, WithMeta},
+        types::{FunctionCallDisplay, QlAst, TokenMeta, WithMeta},
     },
 };
 
@@ -15,11 +18,13 @@ pub fn parse<'a>(input: &'a str) -> Result<QlAst, ParseError> {
 }
 
 fn do_parse<'a>(
-    mut stream: impl Iterator<Item = (Token, TokenMeta)>,
-    _min_binding_power: usize,
+    mut raw_stream: impl Iterator<Item = (Token, TokenMeta)>,
+    min_binding_power: usize,
 ) -> Result<QlAst, ParseError> {
     use ParseError::*;
     use Token::*;
+
+    let mut stream = raw_stream.peekable();
 
     let (lhs_token, lhs_meta) = stream.next().ok_or(UnexpectedEOF)?;
 
@@ -34,6 +39,7 @@ fn do_parse<'a>(
         },
         Sym(x) => (QlAst::Symbol(x.into()), lhs_meta),
         SingleQuotedString(x) => (ScalarValue::Text(x.into()).into(), lhs_meta),
+        Bang => todo!(),
         Plus => todo!(),
         Minus => todo!(),
         Mul => todo!(),
@@ -58,7 +64,36 @@ fn do_parse<'a>(
         Unknown => todo!(),
     };
 
-    todo!();
+    'operator_loop: while let Some((token, meta)) = stream.peek() {
+        let pf = postfix_binding_power(token);
+
+        if let Some(binding_power) = pf {
+            let (left, right) = binding_power;
+
+            if left < min_binding_power {
+                break 'operator_loop;
+            }
+
+            stream.next();
+            let new_meta = lhs.1.combine(*meta);
+
+            if *token == Bang {
+                lhs = (
+                    QlAst::Call {
+                        op: Arc::from((token, *meta)),
+                        display: FunctionCallDisplay::Postfix,
+                        args: Box::new([Arc::from(lhs)]),
+                    },
+                    new_meta,
+                )
+            } else {
+            }
+
+            todo!();
+        }
+    }
+
+    Ok(lhs.0)
 }
 
 //   const [lhsToken, lhsMeta] = base;
